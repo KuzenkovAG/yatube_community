@@ -1,11 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Group
 
+POST_LIMIT: int = 10
+
 
 def index(request):
+    """Main page"""
     template = 'posts/index.html'
     title = 'Последние обновления на сайте'
-    posts = Post.objects.order_by('-pub_date')[:10]
+    posts = Post.objects.select_related('author')[:POST_LIMIT]
     context = {
         'title': title,
         'posts': posts
@@ -14,9 +17,11 @@ def index(request):
 
 
 def group_post(request, slug):
+    """Page of group"""
 
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.filter(group=group).order_by('-pub_date')[:10]
+    posts = Post.objects.select_related('author').filter(
+        group=group)[:POST_LIMIT]
 
     template = 'posts/group_list.html'
     title = f'Записи сообщества {group.title}'
