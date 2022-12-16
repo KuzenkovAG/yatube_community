@@ -5,6 +5,7 @@ User = get_user_model()
 
 
 class Group(models.Model):
+    """Group of post"""
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField()
@@ -14,6 +15,7 @@ class Group(models.Model):
 
 
 class Post(models.Model):
+    """Post which user create"""
     text = models.TextField()
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(
@@ -25,5 +27,9 @@ class Post(models.Model):
         Group,
         blank=True,
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        related_name='posts'
     )
+
+    class Meta:
+        ordering = ["-pub_date"]
