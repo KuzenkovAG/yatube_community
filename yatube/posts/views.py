@@ -8,7 +8,7 @@ def index(request):
     """Main page"""
     template = 'posts/index.html'
     title = 'Последние обновления на сайте'
-    posts = Post.objects.select_related('author')[:POST_LIMIT]
+    posts = Post.objects.select_related('author', 'group')[:POST_LIMIT]
     context = {
         'title': title,
         'posts': posts
@@ -20,8 +20,7 @@ def group_post(request, slug):
     """Page of group"""
 
     group = get_object_or_404(Group, slug=slug)
-    posts = Post.objects.select_related('author').filter(
-        group=group)[:POST_LIMIT]
+    posts = group.posts.all()[:POST_LIMIT]
 
     template = 'posts/group_list.html'
     title = f'Записи сообщества {group.title}'
